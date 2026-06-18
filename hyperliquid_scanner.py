@@ -44,8 +44,8 @@ HYPERLIQUID_API = "https://api.hyperliquid.xyz/info"
 BINANCE_API     = "https://api.binance.com/api/v3"
 
 MIN_VOLUME_USD         = 5_000_000   # HL 24h notional volume floor
-MAX_WORKERS            = 15
-RATE_LIMIT_RPS         = 15          # Binance: 1200/min; stay under at 15
+MAX_WORKERS            = 30
+RATE_LIMIT_RPS         = 18          # Binance: 1200/min; stay under at 15
 DEDUP_FILE             = "dedup.json"
 DEDUP_COOLDOWN_CANDLES = 3           # suppress re-alert for N × TF duration
 LEADERBOARD_TOP_N      = 10          # show top N assets in leaderboard
@@ -205,7 +205,6 @@ def get_binance_candles(asset: str, display_tf: str) -> pd.DataFrame:
                 r = requests.get(f"{BINANCE_API}/klines",
                                  params={"symbol": symbol, "interval": interval, "limit": 110},
                                  timeout=10)
-                time.sleep(1 / RATE_LIMIT_RPS)
                 if r.status_code == 400:
                     return pd.DataFrame()   # not listed on Binance
                 r.raise_for_status()
